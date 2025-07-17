@@ -2,15 +2,14 @@ import streamlit as st
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Load data
+
 ratings = pd.read_csv("ratings.csv")
 movies = pd.read_csv("movienames.csv")
 
-# Create ratings matrix
 keta = ratings.pivot(index='userId', columns='movieId', values='rating').fillna(0)
 movie_matrix = keta.T
 
-# Compute similarity
+
 similarity_df = cosine_similarity(movie_matrix)
 movie_ids = movie_matrix.index
 cosine_sim = pd.DataFrame(similarity_df, index=movie_ids, columns=movie_ids)
@@ -32,13 +31,13 @@ st.set_page_config(page_title="🎬 Movie Recommender", layout="wide")
 st.title("🎬 Movie Recommendation System")
 st.markdown("Get movies similar to your favorite one!")
 
-# Sidebar
+
 st.sidebar.header("Settings")
 num_recs = st.sidebar.slider("Number of Recommendations", 1, 10, 5)
 genre_options = sorted(set(g for sublist in movies['genres'].str.split('|') for g in sublist))
 selected_genre = st.sidebar.selectbox("Optional: Filter by Genre", ["All"] + genre_options)
 
-# Dropdown
+
 movie_list = movies[['movieId', 'title']].drop_duplicates().reset_index(drop=True)
 movie_name_to_id = dict(zip(movie_list['title'], movie_list['movieId']))
 
